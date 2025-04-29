@@ -43,7 +43,7 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
       maxAngle: widget.maxAngle,
       initialScale: widget.scale,
       allowedSwipeDirection: widget.allowedSwipeDirection,
-      initialOffset: widget.backCardOffset,
+      initialOffset: widget.backCardOffsetEven,
       onSwipeDirectionChanged: onSwipeDirectionChanged,
     );
   }
@@ -128,11 +128,12 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
         onPanUpdate: (tapInfo) {
           if (!widget.isDisabled) {
             setState(
-              () => _cardAnimation.update(
-                tapInfo.delta.dx,
-                tapInfo.delta.dy,
-                _tappedOnTop,
-              ),
+                  () =>
+                  _cardAnimation.update(
+                    tapInfo.delta.dx,
+                    tapInfo.delta.dy,
+                    _tappedOnTop,
+                  ),
             );
           }
         },
@@ -147,9 +148,14 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
   }
 
   Widget _backItem(BoxConstraints constraints, int index) {
+    final top = index.isEven ? ((widget.backCardOffsetEven.dy * index) - _cardAnimation.difference.dy)
+        : ((widget.backCardOffsetOdd.dy * index) - _cardAnimation.difference.dy);
+    final left = index.isEven ?
+    (widget.backCardOffsetEven.dx * index) - _cardAnimation.difference.dx
+        : (widget.backCardOffsetOdd.dx * index) - _cardAnimation.difference.dx;
     return Positioned(
-      top: (widget.backCardOffset.dy * index) - _cardAnimation.difference.dy,
-      left: (widget.backCardOffset.dx * index) - _cardAnimation.difference.dx,
+      top: top,
+      left: left,
       child: Transform.scale(
         scale: _cardAnimation.scale - ((1 - widget.scale) * (index - 1)),
         child: ConstrainedBox(
@@ -190,7 +196,7 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
   Future<void> _handleCompleteSwipe() async {
     final isLastCard = _currentIndex! == widget.cardsCount - 1;
     final shouldCancelSwipe = await widget.onSwipe
-            ?.call(_currentIndex!, _nextIndex, _detectedDirection) ==
+        ?.call(_currentIndex!, _nextIndex, _detectedDirection) ==
         false;
 
     if (shouldCancelSwipe) {
@@ -268,10 +274,10 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
 
     final direction = _directionHistory.last;
     final shouldCancelUndo = widget.onUndo?.call(
-          _currentIndex,
-          _undoableIndex.previousState!,
-          direction,
-        ) ==
+      _currentIndex,
+      _undoableIndex.previousState!,
+      direction,
+    ) ==
         false;
 
     if (shouldCancelUndo) {

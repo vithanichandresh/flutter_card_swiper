@@ -59,11 +59,11 @@ class CardSwiper extends StatefulWidget {
 
   /// The scale of the card that is behind the front card.
   ///
-  /// The [scale] and [backCardOffset] both impact the positions of the back cards.
+  /// The [scale] and [backCardOffsetEven] both impact the positions of the back cards.
   /// In order to keep the back card position same after changing the [scale],
-  /// the [backCardOffset] should also be adjusted.
+  /// the [backCardOffsetEven] should also be adjusted.
   /// * As a rough rule of thumb, 0.1 change in [scale] effects an
-  /// [backCardOffset] of ~35px.
+  /// [backCardOffsetEven] of ~35px.
   ///
   /// Must be between 0 and 1. Defaults to 0.9.
   final double scale;
@@ -120,7 +120,8 @@ class CardSwiper extends StatefulWidget {
   /// [scale] change of 0.1.
   ///
   /// Must be a positive value. Defaults to Offset(0, 40).
-  final Offset backCardOffset;
+  final Offset backCardOffsetOdd;
+  final Offset backCardOffsetEven;
 
   const CardSwiper({
     required this.cardBuilder,
@@ -141,7 +142,8 @@ class CardSwiper extends StatefulWidget {
     this.isLoop = true,
     this.numberOfCardsDisplayed = 2,
     this.onUndo,
-    this.backCardOffset = const Offset(0, 40),
+    this.backCardOffsetEven = const Offset(0, 40),
+    this.backCardOffsetOdd = const Offset(0, 40),
     super.key,
   })  : assert(
           maxAngle >= 0 && maxAngle <= 360,
